@@ -8,7 +8,7 @@ var twit = new twitter( config.twitter );
 
 var connection = mysql.createConnection( config.db );
 
-twit.stream('statuses/filter', { track: '32c3' }, function(stream) {
+twit.stream('statuses/filter', { track: config.track }, function(stream) {
   stream.on('data', function (data) {
 
     if ( data.extended_entities != undefined ) {
@@ -33,7 +33,7 @@ twit.stream('statuses/filter', { track: '32c3' }, function(stream) {
 
             console.log( post.created_at + ' ' + ('               ' + post.screen_name).slice(-15) + ' : ' + post.text);
 
-            var file = fs.createWriteStream('images/' + post.image);
+            var file = fs.createWriteStream(config.imageFolder + '/' + post.image);
 
             var request = https.get(imageUrl + ':large', function(response) {
               response.pipe(file);

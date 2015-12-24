@@ -13,5 +13,8 @@ config.db = {
   password : '',
   database : ''
 };
+config.imageFolder = '';
+
+config.track = '32c3';
 
 module.exports = config;
