@@ -1,0 +1,17 @@
+var config = {};
+
+config.twitter = {
+  consumer_key:         '',
+  consumer_secret:      '',
+  access_token_key:     '',
+  access_token_secret:  ''
+};
+
+config.db = {
+  host     : '',
+  user     : '',
+  password : '',
+  database : ''
+};
+
+module.exports = config;

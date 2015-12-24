@@ -1,21 +1,12 @@
 var twitter = require('ntwitter'),
     https   = require('https'),
     fs      = require('fs'),
-    mysql   = require('mysql');
+    mysql   = require('mysql'),
+    config  = require('./config');
 
-var twit = new twitter({
-  consumer_key:         '',
-  consumer_secret:      '',
-  access_token_key:     '',
-  access_token_secret:  ''
-});
+var twit = new twitter( config.twitter );
 
-var connection = mysql.createConnection({
-  host     : '',
-  user     : '',
-  password : '',
-  database : ''
-});
+var connection = mysql.createConnection( config.db );
 
 twit.stream('statuses/filter', { track: '32c3' }, function(stream) {
   stream.on('data', function (data) {
