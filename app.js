@@ -27,6 +27,7 @@ twit.stream('statuses/filter', { track: config.track }, function(stream) {
             var imageUrl = media[i].media_url_https;
 
             var post  = {
+              tw_id       : data.id_str,
               screen_name : data.user.screen_name,
               created_at  : data.created_at,
               text        : data.text,
