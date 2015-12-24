@@ -10,7 +10,7 @@ var connection = mysql.createConnection( config.db );
 
 twit.stream('statuses/filter', { track: config.track }, function(stream) {
 
-  console.log('connected twitter\'s to streaming API...');
+  console.log('connected to twitter\'s streaming API...');
 
   stream.on('data', function (data) {
 
