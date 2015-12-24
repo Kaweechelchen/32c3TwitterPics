@@ -10,41 +10,45 @@ var connection = mysql.createConnection( config.db );
 
 twit.stream('statuses/filter', { track: config.track }, function(stream) {
 
-  console.log('connected twitter\'s to streaming API...')
+  console.log('connected twitter\'s to streaming API...');
 
   stream.on('data', function (data) {
 
-    if ( data.extended_entities != undefined ) {
+    if (data.text.substr(0,4) != 'RT @') {
 
-      if ( data.extended_entities.media != undefined ) {
+      if ( data.extended_entities != undefined ) {
 
-        var media = data.extended_entities.media;
+        if ( data.extended_entities.media != undefined ) {
 
-        for (var i = 0; i < media.length; i++) {
+          var media = data.extended_entities.media;
 
-          var imageUrl = media[i].media_url_https;
+          for (var i = 0; i < media.length; i++) {
 
-          var post  = {
-            screen_name : data.user.screen_name,
-            created_at  : data.created_at,
-            text        : data.text,
-            imageUrl    : imageUrl,
-            image       : imageUrl.match(/\/([^/]+)$/)[1]
-          };
+            var imageUrl = media[i].media_url_https;
 
-          var query = connection.query('INSERT INTO tweets SET ?', post, function(err, result) {
+            var post  = {
+              screen_name : data.user.screen_name,
+              created_at  : data.created_at,
+              text        : data.text,
+              imageUrl    : imageUrl,
+              image       : imageUrl.match(/\/([^/]+)$/)[1]
+            };
 
-            console.log( post.created_at + ' ' + ('               ' + post.screen_name).slice(-15) + ' : ' + post.text);
+            var query = connection.query('INSERT INTO tweets SET ?', post, function(err, result) {
 
-            var file = fs.createWriteStream(config.imageFolder + '/' + post.image);
+              console.log( post.created_at + ' ' + ('               ' + post.screen_name).slice(-15) + ' : ' + post.text);
 
-            var request = https.get(imageUrl + ':large', function(response) {
-              response.pipe(file);
+              var file = fs.createWriteStream(config.imageFolder + '/' + post.image);
+
+              var request = https.get(imageUrl + ':large', function(response) {
+                response.pipe(file);
+              });
+
+            }, function (error) {
+              console.error(error);
             });
 
-          }, function (error) {
-            console.error(error);
-          });
+          }
 
         }
 
