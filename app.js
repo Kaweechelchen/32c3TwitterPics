@@ -9,6 +9,9 @@ var twit = new twitter( config.twitter );
 var connection = mysql.createConnection( config.db );
 
 twit.stream('statuses/filter', { track: config.track }, function(stream) {
+
+  console.log('connected twitter\'s to streaming API...')
+
   stream.on('data', function (data) {
 
     if ( data.extended_entities != undefined ) {
