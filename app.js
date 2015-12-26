@@ -22,11 +22,13 @@ twit.stream('statuses/filter', { track: config.track }, function(stream) {
 
           var media = data.extended_entities.media;
 
+          var post;
+
           for (var i = 0; i < media.length; i++) {
 
             var imageUrl = media[i].media_url_https;
 
-            var post  = {
+            post  = {
               tw_id       : data.id_str,
               screen_name : data.user.screen_name,
               created_at  : data.created_at,
@@ -35,19 +37,7 @@ twit.stream('statuses/filter', { track: config.track }, function(stream) {
               image       : imageUrl.match(/\/([^/]+)$/)[1]
             };
 
-            var query = connection.query('INSERT INTO tweets SET ?', post, function(err, result) {
-
-              console.log( post.created_at + ' ' + ('               ' + post.screen_name).slice(-15) + ' : ' + post.text);
-
-              var file = fs.createWriteStream(config.imageFolder + '/' + post.image);
-
-              var request = https.get(imageUrl + ':large', function(response) {
-                response.pipe(file);
-              });
-
-            }, function (error) {
-              console.error(error);
-            });
+            savePost( post );
 
           }
 
@@ -64,3 +54,21 @@ twit.stream('statuses/filter', { track: config.track }, function(stream) {
   });
 
 });
+
+function savePost( post ) {
+
+  var query = connection.query('INSERT INTO tweets SET ?', post, function(err, result) {
+
+    console.log( post.created_at + ' ' + ('               ' + post.screen_name).slice(-15) + ' : ' + post.text);
+
+    var file = fs.createWriteStream(config.imageFolder + '/' + post.image);
+
+    var request = https.get(post.imageUrl + ':large', function(response) {
+      response.pipe(file);
+    });
+
+  }, function (error) {
+    console.error(error);
+  });
+
+}
